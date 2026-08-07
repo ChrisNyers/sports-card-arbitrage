@@ -97,7 +97,7 @@ def search():
         for c in CARD_CATALOG.values():
             if (c.player_name.lower() == player_name.lower() and
                 c.year == year and
-                c.set_name.lower() == set_name.lower()):
+                c.set_name.lower().startswith(set_name.lower())):
                 card = c
                 break
 
