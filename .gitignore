@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+var/*.db
+models/*.joblib
+models/*.json
+output/*.html
+!models/.gitkeep
+!output/.gitkeep
+!var/.gitkeep
+*.egg-info/
+.pytest_cache/
+.cache/

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Atlas - eBay Growth Check Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #856404;
+            margin-bottom: 20px;
+        }
+
+        .search-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1.5fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .results-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .card-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .card-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .card-details {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .listings-count {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            color: #004085;
+            font-weight: 500;
+        }
+
+        .listing {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+
+        .listing:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+        }
+
+        .listing-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .listing-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .listing-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .listing-value {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .listing-price {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .listing-format {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .source-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+        }
+
+        .clear-btn:hover {
+            background: #5a6268;
+        }
+
+        footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        .source-notice {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 6px;
+            color: white;
+            font-size: 13px;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Project Atlas</h1>
+            <p class="subtitle">eBay Growth Check Demonstration</p>
+            <div class="disclaimer">
+                <strong>⚠️ Research and Decision Support Only</strong><br>
+                This tool retrieves and analyzes publicly available eBay marketplace data for research and decision support purposes only. It does not execute trades, place bids, or perform any transactions.
+            </div>
+        </header>
+
+        <div class="search-section">
+            <div class="search-title">Search for a Sports Card</div>
+
+            <div class="error" id="error-message"></div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Searching eBay listings...</p>
+            </div>
+
+            <form id="search-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="player-name">Player Name</label>
+                        <input type="text" id="player-name" placeholder="e.g., Patrick Mahomes" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="year">Year</label>
+                        <input type="number" id="year" placeholder="e.g., 2017" min="1980" max="2026" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="set-name">Card Set</label>
+                        <input type="text" id="set-name" placeholder="e.g., Panini Prizm" required>
+                    </div>
+                </div>
+                <button type="submit">Search eBay</button>
+            </form>
+
+            <div class="source-notice">
+                <strong>Data Source:</strong> This tool retrieves public listing data from eBay's Browse API. All displayed information is from eBay's publicly available marketplace data.
+            </div>
+        </div>
+
+        <div class="results-section" id="results-section">
+            <div class="results-title">Search Results</div>
+            <div class="card-info" id="card-info"></div>
+            <div class="listings-count" id="listings-count"></div>
+            <div id="listings-container"></div>
+            <div class="button-group">
+                <button class="clear-btn" onclick="clearSearch()">New Search</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Project Atlas • eBay Growth Check Demo • For review purposes only</p>
+    </footer>
+
+    <script>
+        // Prevent credentials from appearing in logs or error messages
+        console.log = function() {};
+        console.error = function() {};
+        console.warn = function() {};
+
+        const form = document.getElementById('search-form');
+        const errorDiv = document.getElementById('error-message');
+        const loadingDiv = document.getElementById('loading');
+        const resultsSection = document.getElementById('results-section');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await performSearch();
+        });
+
+        async function performSearch() {
+            const playerName = document.getElementById('player-name').value;
+            const year = document.getElementById('year').value;
+            const setName = document.getElementById('set-name').value;
+
+            // Clear previous results and errors
+            errorDiv.classList.remove('active');
+            resultsSection.classList.remove('active');
+            loadingDiv.classList.add('active');
+
+            try {
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        player_name: playerName,
+                        year: parseInt(year),
+                        set_name: setName
+                    })
+                });
+
+                const data = await response.json();
+                loadingDiv.classList.remove('active');
+
+                if (!data.success) {
+                    showError(data.error || 'An error occurred');
+                    return;
+                }
+
+                displayResults(data);
+            } catch (error) {
+                loadingDiv.classList.remove('active');
+                showError('Network error. Please try again.');
+            }
+        }
+
+        function displayResults(data) {
+            const card = data.card;
+            const listings = data.listings;
+
+            // Display card information
+            const cardInfo = document.getElementById('card-info');
+            cardInfo.innerHTML = `
+                <div class="card-name">${card.player} - ${card.year} ${card.set}</div>
+                <div class="card-details">
+                    <strong>Manufacturer:</strong> ${card.manufacturer}<br>
+                    <strong>Card #:</strong> ${card.card_number || 'N/A'}<br>
+                    <strong>Source:</strong> <span class="source-badge">${data.source}</span>
+                </div>
+            `;
+
+            // Display listings count
+            const listingsCount = document.getElementById('listings-count');
+            if (listings.length === 0) {
+                listingsCount.innerHTML = `
+                    <div class="no-results">
+                        <p>No active listings found for this card on eBay.</p>
+                    </div>
+                `;
+            } else {
+                listingsCount.innerHTML = `Found ${listings.length} active listing${listings.length !== 1 ? 's' : ''} on eBay`;
+            }
+
+            // Display listings
+            const container = document.getElementById('listings-container');
+            container.innerHTML = '';
+
+            listings.forEach((listing, index) => {
+                const listingDiv = document.createElement('div');
+                listingDiv.className = 'listing';
+                listingDiv.innerHTML = `
+                    <div class="listing-row">
+                        <div class="listing-field">
+                            <div class="listing-label">Price</div>
+                            <div class="listing-price">$${listing.price.toFixed(2)}</div>
+                        </div>
+                        <div class="listing-field">
+                            <div class="listing-label">Format</div>
+                            <div class="listing-format">${listing.format}</div>
+                        </div>
+                        <div class="listing-field">
+                            <div class="listing-label">Source</div>
+                            <div class="listing-value"><span class="source-badge">${listing.source}</span></div>
+                        </div>
+                        <div class="listing-field">
+                            <div class="listing-label">Listed</div>
+                            <div class="listing-value">${formatDate(listing.listed_at)}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(listingDiv);
+            });
+
+            resultsSection.classList.add('active');
+        }
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.add('active');
+        }
+
+        function clearSearch() {
+            form.reset();
+            document.getElementById('player-name').focus();
+            resultsSection.classList.remove('active');
+            errorDiv.classList.remove('active');
+            loadingDiv.classList.remove('active');
+        }
+
+        function formatDate(isoString) {
+            if (!isoString) return 'N/A';
+            const date = new Date(isoString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Focus on player name input on page load
+        document.getElementById('player-name').focus();
+    </script>
+</body>
+</html>

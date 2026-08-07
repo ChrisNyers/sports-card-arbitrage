@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Card Arbitrage — Daily Report {{ as_of_date }}</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; margin: 2rem; color: #1a1a1a; background: #fafafa; }
+  h1 { font-size: 1.4rem; }
+  .meta { color: #666; font-size: 0.85rem; margin-bottom: 1.5rem; }
+  table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  th, td { padding: 0.5rem 0.75rem; text-align: right; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+  th { background: #f0f0f0; text-align: right; }
+  th:nth-child(1), th:nth-child(2), th:nth-child(3), th:nth-child(9),
+  td:nth-child(1), td:nth-child(2), td:nth-child(3), td:nth-child(9) { text-align: left; }
+  .risk-low { color: #1a7f37; }
+  .risk-moderate { color: #9a6700; }
+  .risk-elevated { color: #bc4c00; }
+  .risk-bubble_risk { color: #cf222e; font-weight: 600; }
+  .empty { color: #666; font-style: italic; }
+  .warning { background: #fff8c5; border: 1px solid #d4a72c; padding: 0.6rem 0.9rem; border-radius: 4px; font-size: 0.85rem; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+<h1>Daily Top Opportunities — {{ as_of_date }}</h1>
+<div class="meta">Generated {{ generated_at }} UTC · Manual-approval workflow — no trades are executed automatically.</div>
+
+{% if opportunities and (opportunities | map(attribute='estimated_roic_pct') | max) <= 0 %}
+<div class="warning">Every candidate today has a negative fee-adjusted ROIC estimate (round-trip marketplace fees are ~26%, and none of today's price momentum clears that bar). This is expected on many days, not a bug — it means there's no real edge to act on today.</div>
+{% endif %}
+
+{% if opportunities %}
+<table>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Player</th>
+      <th>Set / Grade</th>
+      <th>Price</th>
+      <th>Target Sell</th>
+      <th>Cost Basis</th>
+      <th>ROIC %</th>
+      <th>ML Prob Rise</th>
+      <th>Bubble Score</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for o in opportunities %}
+    <tr>
+      <td>{{ o.rank }}</td>
+      <td>{{ o.player_name }} ({{ o.year }})</td>
+      <td>{{ o.set_name }} — {{ o.grade }}</td>
+      <td>${{ "%.2f"|format(o.current_price) }}</td>
+      <td>${{ "%.2f"|format(o.target_sell_price) }}</td>
+      <td>${{ "%.2f"|format(o.estimated_cost_basis) }}</td>
+      <td>{{ "%.1f"|format(o.estimated_roic_pct) }}</td>
+      <td>{{ "%.2f"|format(o.ml_prob_price_rise) }}</td>
+      <td>{{ "%.0f"|format(o.bubble_composite_score) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No opportunities found for {{ as_of_date }}.</p>
+{% endif %}
+
+</body>
+</html>
